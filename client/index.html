@@ -12,51 +12,30 @@
         var app = angular.module("app", []);
 
         app.controller("controller", function($scope, $http) {
-            /**$scope.signUp = function() {
-                alert("test");
-                var dataString = {
-                    "user": {
-                        "e-mail": $scope.user.email,
-                        "password": $scope.user.password,
-                        "name": {
-                            "firstName": $scope.user.firstName,
-                            "lastName": $scope.user.lastName
-                        }
-                    }
-                };
-                var options = {
-                    url: "https://containerparkproject.firebaseio.com/users.json",
-                    method: 'POST',
-                    data: dataString
-                };
-                $http(options).then(function(data) {
-                    $scope.test = "aight!";
-                }, function(err) {
-                    $scope.test = "booo";
-                });
-            }**/
+            
             $scope.user = {
-                'email': '',
-                'password': '',
-                'firstName': '',
-                'lastName': ''
-            }
+                "email": "",
+                "password": "",
+                "firstName":"",
+                "lastName":"",
+            };
+            
             $scope.register = function() {
-                var controleEmail = "";
-                $http.get("http://localhost:3000/api/emailcontrole", $scope.user.email).success(function(res) {
-                    controleEmail = res[Object.keys(res)[0]].email;
-                    console.log(controleEmail);
+                $http.post("http://localhost:3000/api/register", $scope.user).success(function(res) {
+                        $scope.test = res;
                 });
-                console.log(res[Object.keys(res)[0]]);
-                if ($scope.user.email != controleEmail) {
-                    $http.post("http://localhost:3000/api/register", $scope.user).success(function(res) {
-                        $scope.test = "gelukt";
-                    });
-                }
-                else{
-                    window.alert("e-mail in gebruik!");
-                }
             }
+            $scope.login = function(){
+                $http.post("http://localhost:3000/api/login", $scope.user).success(function(res){
+                    
+                    $scope.test = res;
+                    console.log(res);
+                }).catch(function(err){
+                    console.log(err);
+                });
+            }
+                
+            
         });
 
     </script>
@@ -69,6 +48,7 @@
         <input type="text" ng-model="user.firstName" placeholder="First name" />
         <input type="text" ng-model="user.lastName" placeholder="Last name" />
         <input type="button" value="Sign up" ng-click="register()">
+        <input type="button" value="Sign in" ng-click="login()">
         <div>{{test}}</div>
     </div>
 </body>
