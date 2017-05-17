@@ -31,8 +31,8 @@
             params = parseParams();
             
             if(params.access_token){
-                $http.get('https://graph.facebook.com/v2.5/me?fields=id,name&access_token=' + params.access_token).then(function(res){
-                    $scope.test = res.data.name;
+                $http.get('https://graph.facebook.com/v2.5/me?fields=name,email&access_token=' + params.access_token).then(function(res){
+                    $scope.test = res.data.email;
                 },function(err){
                     $scope.test = err;
                 });
@@ -41,7 +41,7 @@
             
             
             $scope.OAuthFb = function(){
-                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000/&response_type=token";
+                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000/?html&response_type=token";
             };
             
             $scope.register = function() {
