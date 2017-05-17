@@ -8,100 +8,110 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkpFSL_zM4u-C9mrsa2_GccNFChRgb88A&callback=initMap"></script>
     <script>
         var app = angular.module("app", []);
-        
-        var markerArray = [];
+        var map;
+        var initMap;
+
+
 
         app.controller("controller", function($scope, $http) {
-            
+
             $scope.user = {
                 "email": "",
                 "password": "",
-                "firstName":"",
-                "lastName":"",
+                "firstName": "",
+                "lastName": "",
             };
-            
-            parseParams = function(){
-                var params = {}, queryString = location.hash.substring(1), regex = /([^&=]+)=([^&]*)/g, m;
-                while (m=regex.exec(queryString)){
+
+            parseParams = function() {
+                var params = {},
+                    queryString = location.hash.substring(1),
+                    regex = /([^&=]+)=([^&]*)/g,
+                    m;
+                while (m = regex.exec(queryString)) {
                     params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
                 }
                 return params;
             };
-            
+
             params = parseParams();
-            
-            if(params.access_token){
-                $http.get('https://graph.facebook.com/v2.5/me?fields=name,id&access_token=' + params.access_token).then(function(res){
+
+            if (params.access_token) {
+                $http.get('https://graph.facebook.com/v2.5/me?fields=name,id&access_token=' + params.access_token).then(function(res) {
                     console.log(res);
-                    $scope.test = res.data.name;
-                },function(err){
+                    //$scope.test = res.data.email;
+                }, function(err) {
                     $scope.test = err;
                 });
             }
-            
-            
-            
-            $scope.OAuthFb = function(){
-                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000?html&response_type=token";
+
+
+
+            $scope.OAuthFb = function() {
+                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000?html&response_type=token&scope=email";
             };
-            
+
             $scope.register = function() {
                 $http.post("http://localhost:3000/api/register", $scope.user).success(function(res) {
-                        $scope.test = res;
+                    $scope.test = res;
                 });
             };
-            $scope.login = function(){
-                $http.post("http://localhost:3000/api/login", $scope.user).success(function(res){
-                    
+            $scope.login = function() {
+                $http.post("http://localhost:3000/api/login", $scope.user).success(function(res) {
+
                     $scope.test = res;
-                    console.log(res);
-                }).catch(function(err){
+                    //console.log(res);
+                }).catch(function(err) {
                     console.log(err);
                 });
             };
-            
-            
+
+
             var arrayLocations;
             
-            $http.get("http://datasets.antwerpen.be/v4/gis/recyclageparkoverzicht.json").success(function(res){
-                arrayLocations = res.data;
-                console.log(arrayLocations[0].point_lat);
-                /*for(var i = 0; i<arrayLocations.length; i++){
-                    var position = {lat: arrayLocations[i].point_lat, lng: arrayLocations[i].point_lng};
-                    var marker = new google.maps.Marker({
-                        position: position,
-                        map: map
-                    });
-                    markerArray.push(marker);
-                }
-                //console.log(array[0]);*/
-                
-            }).catch(function(err){
-                console.log(err);
-            });
-            
-            
-            
-            
-                
-            
+            initMap = function() {
+                var Antwerpen = {
+                    lat: 51.260197,
+                    lng: 4.402771
+                };
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 10,
+                    center: Antwerpen
+                });
+                $http.get("http://datasets.antwerpen.be/v4/gis/recyclageparkoverzicht.json").success(function(res) {
+                    arrayLocations = res.data;
+                    for (var i = 0; i < arrayLocations.length; i++) {
+                        var markerLatLng = {
+                            lat: parseFloat(arrayLocations[i].point_lat),
+                            lng: parseFloat(arrayLocations[i].point_lng)
+                        };
+                        var marker = new google.maps.Marker({
+                            position: markerLatLng,
+                            title: arrayLocations[i].naam
+                        });
+                        marker.setMap(map);
+                    }
+                }).catch(function(err) {
+                    console.log(err);
+                });   
+            }
+
+
+
+
+
+
         });
+
         
-        function initMap() {
-        var Antwerpen = {lat: 51.260197, lng: 4.402771};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
-          center: Antwerpen
-        });
-      }
 
     </script>
-    
+
     <style>
-      #map {
-        width: 100%;
-        height: 400px;
-      }
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+
     </style>
 </head>
 
