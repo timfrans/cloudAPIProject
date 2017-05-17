@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js">
-
-
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkpFSL_zM4u-C9mrsa2_GccNFChRgb88A&callback=initMap"></script>
     <script>
         var app = angular.module("app", []);
+        
+        var markerArray = [];
 
         app.controller("controller", function($scope, $http) {
             
@@ -31,8 +31,9 @@
             params = parseParams();
             
             if(params.access_token){
-                $http.get('https://graph.facebook.com/v2.5/me?fields=name,email&access_token=' + params.access_token).then(function(res){
-                    $scope.test = res.data.email;
+                $http.get('https://graph.facebook.com/v2.5/me?fields=name,id&access_token=' + params.access_token).then(function(res){
+                    console.log(res);
+                    $scope.test = res.data.name;
                 },function(err){
                     $scope.test = err;
                 });
@@ -41,7 +42,7 @@
             
             
             $scope.OAuthFb = function(){
-                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000/?html&response_type=token";
+                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000?html&response_type=token";
             };
             
             $scope.register = function() {
@@ -60,11 +61,48 @@
             };
             
             
+            var arrayLocations;
+            
+            $http.get("http://datasets.antwerpen.be/v4/gis/recyclageparkoverzicht.json").success(function(res){
+                arrayLocations = res.data;
+                console.log(arrayLocations[0].point_lat);
+                /*for(var i = 0; i<arrayLocations.length; i++){
+                    var position = {lat: arrayLocations[i].point_lat, lng: arrayLocations[i].point_lng};
+                    var marker = new google.maps.Marker({
+                        position: position,
+                        map: map
+                    });
+                    markerArray.push(marker);
+                }
+                //console.log(array[0]);*/
+                
+            }).catch(function(err){
+                console.log(err);
+            });
+            
+            
+            
+            
                 
             
         });
+        
+        function initMap() {
+        var Antwerpen = {lat: 51.260197, lng: 4.402771};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: Antwerpen
+        });
+      }
 
     </script>
+    
+    <style>
+      #map {
+        width: 100%;
+        height: 400px;
+      }
+    </style>
 </head>
 
 <body ng-app="app">
@@ -77,6 +115,10 @@
         <input type="button" value="Sign in" ng-click="login()">
         <input type="button" value="Facebook" ng-click="OAuthFb()">
         <div>{{test}}</div>
+        <div>
+            <h3>My Google Maps Demo</h3>
+            <div id="map"></div>
+        </div>
     </div>
 </body>
 
