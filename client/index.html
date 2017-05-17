@@ -20,11 +20,35 @@
                 "lastName":"",
             };
             
+            parseParams = function(){
+                var params = {}, queryString = location.hash.substring(1), regex = /([^&=]+)=([^&]*)/g, m;
+                while (m=regex.exec(queryString)){
+                    params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+                }
+                return params;
+            };
+            
+            params = parseParams();
+            
+            if(params.access_token){
+                $http.get('https://graph.facebook.com/v2.5/me?fields=id,name&access_token=' + params.access_token).then(function(res){
+                    $scope.test = res.data.name;
+                },function(err){
+                    $scope.test = err;
+                });
+            }
+            
+            
+            
+            $scope.OAuthFb = function(){
+                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000/&response_type=token";
+            };
+            
             $scope.register = function() {
                 $http.post("http://localhost:3000/api/register", $scope.user).success(function(res) {
                         $scope.test = res;
                 });
-            }
+            };
             $scope.login = function(){
                 $http.post("http://localhost:3000/api/login", $scope.user).success(function(res){
                     
@@ -33,7 +57,9 @@
                 }).catch(function(err){
                     console.log(err);
                 });
-            }
+            };
+            
+            
                 
             
         });
@@ -49,6 +75,7 @@
         <input type="text" ng-model="user.lastName" placeholder="Last name" />
         <input type="button" value="Sign up" ng-click="register()">
         <input type="button" value="Sign in" ng-click="login()">
+        <input type="button" value="Facebook" ng-click="OAuthFb()">
         <div>{{test}}</div>
     </div>
 </body>
