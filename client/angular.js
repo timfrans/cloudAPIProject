@@ -7,16 +7,16 @@ app.config(function($routeProvider){
     }).when("/main",{
         templateUrl: "main.html",
         controller: "mainController"
+    }).when("/betalen",{
+        templateUrl: "betaling.html",
+        controller: "mainController"
+    }).otherwise({
+        redirectTo: "/"
     });
 });
 
-app.factory('service', function(){
-    var user = {}
-    return user;
-});
-        app.controller("controller", function($scope, $http, $location, service) {
+        app.controller("controller", function($scope, $http, $location) {
             
-            service.user = $scope.user;
             $scope.user = {
                 "password": "",
                 "firstName": "",
@@ -50,7 +50,8 @@ app.factory('service', function(){
 
 
             $scope.OAuthFb = function() {
-                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000/ingelogd.html?html&response_type=token&scope=email";
+                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000/main.html?html&response_type=token&scope=email";
+                $location.path("/main");
             };
 
             $scope.register = function() {
@@ -87,14 +88,21 @@ app.factory('service', function(){
 
         });
 
-app.controller("mainController", function($scope, $http, service){
+app.controller("mainController", function($scope, $http, $location){
     var map;
     var initMap;
     var arrayLocations;
     //initMap();
     
-    $scope.user = service.getUser();
-    console.log($scope.user.firstName);
+    $scope.credentials = {
+        "kaartNr": "",
+        "vervalMaand": "",
+        "vervalJaar":"",
+        "CVC":"",
+        "kost":""
+    }
+    
+    
     
 
             initMap = function() {
@@ -163,4 +171,49 @@ app.controller("mainController", function($scope, $http, service){
                 }
             }
             initMap();
+    
+    
+    var prijsSteenpuin=37.5;
+    var prijsGrofVuil = 20.0;
+    
+    var kostSteenpuin = 0.0;
+    var kostGrofVuil = 0.0;
+    
+    $scope.kost = 0.0;
+    
+    $scope.aantalTot3 = [0, 1, 2,3];
+    $scope.aantalTot2 = [0,1,2];
+    $scope.aantalTot5 = [0,1,2,3,4,5];
+    
+    
+    
+    
+    
+    $scope.$watch('selectedSteenpuin', function(){
+        kostSteenpuin = $scope.selectedSteenpuin * prijsSteenpuin;
+        console.log(kostSteenpuin);
+    });
+    $scope.$watch('selectedGrofVuil', function(){
+        kostGrofVuil = $scope.selectedGrofVuil * prijsGrofVuil;
+        console.log(kostGrofVuil);
+    });
+    
+    $scope.betaal = function(){
+        $scope.credentials.kost = $scope.calculateTotalAmount();
+        $location.path('betalen');
+    }
+    
+    $scope.calculateTotalAmount = function(){
+        return kostSteenpuin + kostGrofVuil; 
+    }
+    
+    $scope.bevestigBetaling = function(){
+        $scope.credentials.kost = $scope.calculateTotalAmount();
+        //console.log($scope.credentials);
+        $http.post("http://localhost:3000/api/betaal", $scope.credentials).success(function(res){
+            
+        });
+    }
+    
+    
 });

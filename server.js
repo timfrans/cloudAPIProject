@@ -57,7 +57,7 @@ server.post("/api/login", function(req, res){
             }
             else{
                 var user = reposGet[Object.keys(reposGet)[0]];
-                //console.log(user.email);
+                console.log(user);
                 if(user.email == req.body.email && user.password == req.body.password){
                     res.status(200).send(true);
                 }
@@ -68,6 +68,32 @@ server.post("/api/login", function(req, res){
             console.log(err);
     });
 });
+
+server.post("/api/betaal", function(req, res){
+    console.log(req);
+    var optionPost={
+        method: 'POST',
+        uri: 'https://api.stripe.com/v1/tokens',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer sk_test_aBBaoRknKHT6nY4zMer4HeNg'
+        },
+        data: {
+            'card[number]': 4242424242424242,
+            'card[exp_month]': 12,
+            'card[exp_year]': 2018,
+            'card[cvc]': 123
+        }
+        //data: 'card[number]=' + req.kaartNr + '&card[exp_month]=' + req.vervalMaand + '&card[exp_year]=' + req.vervalJaar + '&card[cvc]=' + req.CVC
+    }
+    
+    rp(optionPost).then(function(repos){
+        console.log(repos);
+    }).catch(function(err){
+        console.log(err);
+    });
+    
+})
 
 
 

@@ -56,3 +56,13 @@ body{
 .mainDiv{
     margin: 0 auto;
 }
+.regel{
+    margin-left: 15px;
+}
+.regel>input{
+    width: 30px;
+}
+.regel>span{
+    float: right;
+    margin-right: 20px;
+}

@@ -1,5 +1,48 @@
-<h1>Welkom {{user}}</h1>
-   <div class="loginField">
-    <input type="text"/>
+<div class="loginField">
+  <div class="regel">
+   Snoeihout (m³):
+    <select ng-model="selectedSnoeihout" class="aantal" ng-options="item for item in aantalTot3"></select>
+    <span>Gratis</span>
+    </div>
+    <div class="regel">
+    Andere gratis fracties (m³):
+    <select ng-model="selectedFracties" class="aantal" ng-options="item for item in aantalTot2"></select>
+    <span>Gratis</span>
+    </div>
+    <div class="regel">
+   Steenpuin (m³):
+    <select ng-model="selectedSteenpuin" class="aantal" ng-options="item for item in aantalTot2"></select>
+    <span>37.50€/m³</span>
+    </div>
+    <div class="regel">
+   Grof vuil (m³):
+    <select ng-model="selectedGrofVuil" class="aantal" ng-options="item for item in aantalTot5"></select>
+    <span>20€/m³</span>
+    </div>
+    <div class="regel">
+       Klein gevaarlijk afval (liter):
+        <input type="number" class="aantal" ng-model="selectedKGA"/>
+        <span>Gratis</span>
+    </div>
+    <div class="regel">
+       Autobanden: 
+        <input type="number" class="aantal" ng-model="selectedBanden"/>
+        <span>Gratis</span>
+    </div>
+    <div>
+        <span>Kaartnummer: </span><input type="text" placeholder="Kaartnummer" ng-model="credentials.kaartNr"/>
+    </div>
+    <div>
+        <span>Vervalmaand: </span><input type="text" placeholder="Vervalmaand" ng-model="credentials.vervalMaand"/>
+    </div>
+    <div>
+        <span>Vervaljaar: </span><input type="text" placeholder="VervalJaar" ng-model="credentials.vervalJaar"/>
+    </div>
+    <div>
+        <span>CVC: </span><input type="text" placeholder="CVC" ng-model="credentials.CVC"/>
+    </div>
+    
+    
+    <input type="button" value="betaal" ng-click="bevestigBetaling()"/>
 </div>
 <div id="map"></div>
