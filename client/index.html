@@ -1,164 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="logincss.css"/>
+    <script src="tabfunctie.js"></script>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkpFSL_zM4u-C9mrsa2_GccNFChRgb88A&callback=initMap"></script>
-    <script>
-        var app = angular.module("app", []);
-        var map;
-        var initMap;
-
-        app.controller("controller", function($scope, $http) {
-
-            $scope.user = {
-                "email": "",
-                "password": "",
-                "firstName": "",
-                "lastName": "",
-            };
-
-            parseParams = function() {
-                var params = {},
-                    queryString = location.hash.substring(1),
-                    regex = /([^&=]+)=([^&]*)/g,
-                    m;
-                while (m = regex.exec(queryString)) {
-                    params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-                }
-                return params;
-            };
-
-            params = parseParams();
-
-            if (params.access_token) {
-                $http.get('https://graph.facebook.com/v2.5/me?fields=name,id&access_token=' + params.access_token).then(function(res) {
-                    console.log(res);
-                    //$scope.test = res.data.email;
-                }, function(err) {
-                    $scope.test = err;
-                });
-            }
-
-
-
-            $scope.OAuthFb = function() {
-                window.location.href = "https://www.facebook.com/v2.9/dialog/oauth?client_id=840991062719449&redirect_uri=http://localhost:3000?html&response_type=token&scope=email";
-            };
-
-            $scope.register = function() {
-                $http.post("http://localhost:3000/api/register", $scope.user).success(function(res) {
-                    $scope.test = res;
-                });
-            };
-            $scope.login = function() {
-                $http.post("http://localhost:3000/api/login", $scope.user).success(function(res) {
-
-                    $scope.test = res;
-                    //console.log(res);
-                }).catch(function(err) {
-                    console.log(err);
-                });
-            };
-
-
-            var arrayLocations;
-
-            initMap = function() {
-                map = new google.maps.Map(document.getElementById('map'));
-                $http.get("http://datasets.antwerpen.be/v4/gis/recyclageparkoverzicht.json").success(function(res) {
-                    arrayLocations = res.data;
-                    for (var i = 0; i < arrayLocations.length; i++) {
-                        createMarker(i);
-                    }
-                }).catch(function(err) {
-                    console.log(err);
-                });
-                getCurrentLocation();
-            }
-            
-            
-            
-            var createMarker = function(i) {
-                var markerLatLng = {
-                    lat: parseFloat(arrayLocations[i].point_lat),
-                    lng: parseFloat(arrayLocations[i].point_lng)
-                };
-
-
-                var content = '<h3>' + arrayLocations[i].naam + '</h3>' +
-                    '<p>Adres: ' + arrayLocations[i].straat + ' ' + arrayLocations[i].district + ' ' + arrayLocations[i].postcode + '</p><p>type: ' + arrayLocations[i].type + '</p><p>subtype: ' + arrayLocations[i].subtype;
-
-                var infoWindow = new google.maps.InfoWindow({
-                    content: content
-                });
-
-                var marker = new google.maps.Marker({
-                    position: markerLatLng,
-                    title: arrayLocations[i].naam,
-                    map: map
-                });
-                marker.addListener('click', function() {
-                    infoWindow.open(map, marker);
-                });
-            }
-            
-            var getCurrentLocation = function(){
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        var pos = {
-                            lat: parseFloat(position.coords.latitude),
-                            lng: parseFloat(position.coords.longitude)
-                        };
-                        console.log(pos);
-
-                        var marker = new google.maps.Marker({
-                            position: pos,
-                            title: "u bent hier",
-                            icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-                            animation: google.maps.Animation.DROP
-                        });
-
-                        marker.setMap(map);
-                        map.setCenter(pos);
-                        map.setZoom(13);
-                    }, function() {
-                        console.log("location not found");
-                    });
-                } else {
-                    console.log("location not found");
-                }
-            }
-        });
-
-    </script>
-
-    <style>
-        #map {
-            width: 100%;
-            height: 400px;
-        }
-
-    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkpFSL_zM4u-C9mrsa2_GccNFChRgb88A"></script>
+    <script src="angular.js"></script>
+    
 </head>
-
 <body ng-app="app">
-    <div ng-controller="controller">
-        <input type="text" ng-model="user.email" placeholder="E-mail" />
-        <input type="password" ng-model="user.password" placeholder="Password" />
-        <input type="text" ng-model="user.firstName" placeholder="First name" />
-        <input type="text" ng-model="user.lastName" placeholder="Last name" />
-        <input type="button" value="Sign up" ng-click="register()">
-        <input type="button" value="Sign in" ng-click="login()">
-        <input type="button" value="Facebook" ng-click="OAuthFb()">
-        <div>{{test}}</div>
-        <div>
-            <h3>My Google Maps Demo</h3>
-            <div id="map"></div>
-        </div>
+    <div ng-view class="mainDiv">
+        
     </div>
 </body>
-
 </html>
+

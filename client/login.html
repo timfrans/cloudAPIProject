@@ -1,17 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="logincss.css"/>
-</head>
-<body>
-    <div class="loginField">
-        <div>
-            <p><input type="email" placeholder="E-mail"/></p>
-            <p><input type="password" placeholder="Wachtwoord"/></p>
-            <p><input type="text" placeholder="Voornaam"/><input type="text" placeholder="Achternaam"/></p>
+<div class="loginField">
+       <div class="tab">
+           <button class="tabLinks" onclick="openTab(event, 'logIn')" id="defaultOpen">Login</button>
+           <button class="tabLinks" onclick="openTab(event, 'registreer')">Registreer</button>
+       </div>
+        <div id="registreer" class="tabContent">
+           <h3>Registreer</h3>
+            <p>E-mail: <input type="email" placeholder="E-mail" class="input" ng-model="user.email"/></p>
+            <p>Wachtwoord: <input type="password" placeholder="Wachtwoord" class="input" ng-model="user.password"/></p>
+            <p>Herhaal wachtwoord: <input type="password" placeholder="Wachtwoord" class="input" ng-model="herhaalPassword"/></p>
+            <p>Voornaam: <input type="text" placeholder="Voornaam" class="input" ng-model="user.firstName"/></p>
+            <p>Achternaam: <input type="text" placeholder="Achternaam" class="input" ng-model="user.lastName"/></p>
+            <p><input type="button" value="Registreer" ng-click="register()"/></p>
         </div>
+        <div id="logIn" class="tabContent">
+           <h3>Log in</h3>
+            <p>E-mail: <input type="text" placeholder="E-mail" class="input" ng-model="user.email"/></p>
+            <p>Wachtwoord: <input type="password" placeholder="Wachtwoord" class="input" ng-model="user.password"/></p>
+            <p><input type="button" value="Log in" ng-click="login()"/><input type="button" value="Log in met Facebook" style="margin-left: 50px;" ng-click="OAuthFb()"/></p>
+        </div>
+        <div>{{test}}</div>
     </div>
-</body>
-</html>
